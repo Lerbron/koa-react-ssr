@@ -1,0 +1,14 @@
+{
+  "apps": [{
+    "name": "koa-react-ssr",
+    "script": "dist/server/server.js",
+    "watch": false,
+    "log_date_format": "YYYY-MM-DD HH:mm Z",
+    "exec_mode": "cluster",
+    "max_memory_restart": "500M",
+    "env": {
+      "NODE_ENV": "production"
+    },
+    "instances": 0
+  }]
+}

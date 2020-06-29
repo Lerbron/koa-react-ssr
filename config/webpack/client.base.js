@@ -1,0 +1,216 @@
+const webpack = require('webpack')
+const HtmlwebpackPlugin = require('html-webpack-plugin')
+const path = require('path')
+const chalk = require('chalk')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const ProgressBarPlugin = require('progress-bar-webpack-plugin')
+const HappyPack = require('happypack');
+const os = require('os');
+
+const happyThreadPool = HappyPack.ThreadPool({
+  size: os.cpus().length
+});
+// const OfflinePlugin = require('offline-plugin');
+
+const config = require('../index')
+const devMode = process.env.NODE_ENV === 'development'
+
+/**
+ * 配置 autoprefixer 各浏览器前缀
+ * postcss-flexbugs-fixes 检查flex错误
+ *  */
+const postcssConfig = {
+  loader: 'postcss-loader',
+  options: {
+    plugins: () => [
+      require('postcss-flexbugs-fixes'),
+      require('autoprefixer')({
+        overrideBrowserslist: ['last 2 versions'] // https://browserl.ist/?q=last+2+version
+      })
+    ]
+  }
+}
+
+module.exports = {
+  name: 'client',
+  target: 'web',
+
+  entry: {
+    app: ['@babel/polyfill', './src/client/index.js']
+  },
+
+  output: {
+    path: path.resolve(__dirname, '../../dist/client'),
+    filename: devMode ? '[name].bundle.js' : '[name].[hash].js',
+    publicPath: config.public_path + '/'
+  },
+
+  resolve: {
+    alias: {
+      '@': path.resolve('src'),
+      Config: path.resolve('config/index')
+    }
+  },
+
+  resolveLoader: {
+    moduleExtensions: ['-loader']
+  },
+
+  optimization: {
+    namedModules: true,
+    noEmitOnErrors: true,
+    splitChunks: {
+      cacheGroups: {
+        styles: {
+          name: 'styles',
+          test: /(\.css|\.scss)$/,
+          chunks: 'all',
+          enforce: true
+        },
+        commons: {
+          name: 'vendor',
+          test: /[\\/]node_modules[\\/]/,
+          chunks: 'all'
+        }
+      }
+    }
+  },
+
+  module: {
+    rules: [
+      // js 文件解析
+      {
+        test: /\.js$/i,
+        exclude: /node_modules/,
+        // loader: 'babel-loader',
+        loader: 'happypack/loader?id=happybabel',
+      },
+      {
+        test: /\.scss$/,
+        use: [
+          'css-hot-loader',
+          {
+            loader: MiniCssExtractPlugin.loader
+          },
+          {
+            loader: `css`,
+            options: {
+              // modules: true,
+              // localIdentName: config.class_scoped_name,
+              minimize: true,
+              sourceMap: true,
+              importLoaders: 1
+            }
+          },
+          {
+            loader: `sass`
+          },
+          {
+            ...postcssConfig
+          }
+        ]
+      },
+
+      // css 解析
+      {
+        test: /\.css$/,
+        use: [
+          'css-hot-loader',
+          {
+            loader: MiniCssExtractPlugin.loader
+          },
+          {
+            loader: `css`
+          },
+          {
+            ...postcssConfig
+          }
+        ]
+      },
+
+      // 小于8K的图片，转 base64
+      {
+        test: /\.(png|jpg|gif)$/,
+        loader: 'url?limit=8192'
+      },
+
+      // 小于8K的字体，转 base64
+      {
+        test: /\.(ttf|eot|svg|woff|woff2)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: 'file?limit=8192'
+      }
+    ]
+  },
+
+  plugins: [
+    new HappyPack({
+      id: 'happybabel',
+      loaders: [{
+        loader: 'babel-loader',
+        options: {
+          cacheDirectory: true,
+          presets: [
+            require.resolve('@babel/preset-env'),
+            require.resolve('@babel/preset-react'),
+          ],
+          plugins: [
+            require.resolve('@babel/plugin-transform-async-to-generator'),
+            require.resolve('@babel/plugin-syntax-dynamic-import'),
+            require.resolve('@babel/plugin-proposal-class-properties'),
+            require.resolve('@babel/plugin-proposal-export-default-from'),
+            require.resolve('@babel/plugin-transform-runtime'),
+            require.resolve('@babel/plugin-transform-modules-commonjs'),
+            require.resolve('babel-plugin-dynamic-import-webpack'),
+            [require.resolve('babel-plugin-import'),
+              {
+                style: 'css',
+                libraryName: 'antd',
+                libraryDirectory: 'es'
+              }
+            ]
+          ]
+        }
+      }],
+      threadPool: happyThreadPool,
+      // cache: true,
+      verbose: true
+    }),
+
+    new webpack.DefinePlugin({
+      __SERVER__: 'false',
+      __CLIENT__: 'true'
+    }),
+
+    // 提取css插件
+    new MiniCssExtractPlugin({
+      filename: devMode ? '[name].css' : '[name].[hash].css'
+    }),
+
+    // new OfflinePlugin({
+    //   autoUpdate: 1000 * 60 * 5,
+    //   ServiceWorker: {
+    //     publicPath: '/sw.js'
+    //   }
+    // }),
+
+    // 创建视图模版文件，给server使用
+    // 主要是打包后的添加的css、js静态文件路径添加到模版中
+    new HtmlwebpackPlugin({
+      filename: path.resolve(__dirname, '../../dist/server/index.html'),
+      template: 'src/views/index.html',
+      metaDom: '<%- meta %>',
+      htmlDom: '<%- html %>',
+      reduxState: '<%- reduxState %>',
+      head: config.head,
+      analysis_script: config.analysis_script
+      // inject: false
+    }),
+
+    new ProgressBarPlugin({
+      format: '  build [:bar] ' + chalk.green.bold(':percent') + ' (:elapsed seconds)',
+      clear: false
+    })
+
+
+  ]
+}

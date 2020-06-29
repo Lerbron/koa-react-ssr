@@ -1,0 +1,10 @@
+body {
+  font-size: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    color: white;
+    background: black;
+  }
+}
