@@ -27,7 +27,7 @@ $ npm run start or yarn start
 ### 开发环境
 
 ```
-npm run start org yarn start
+npm run dev or yarn dev
 ```
 
 ### 生产环境测试
@@ -36,11 +36,6 @@ npm run start org yarn start
 npm run pro or yarn pro
 ```
 
-### 查看包大小
-
-```
-npm run analyzer or yarn analyzer
-```
 
 ## 部署到服务器
 
