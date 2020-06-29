@@ -2,6 +2,7 @@ const webpack = require('webpack')
 // const HtmlwebpackPlugin = require('html-webpack-plugin');
 const path = require('path')
 const os = require('os');
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
 
 const nodeExternals = require('webpack-node-externals')
 // const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -121,6 +122,7 @@ module.exports = {
       // cache: true,
       verbose: true
     }),
+    new FriendlyErrorsWebpackPlugin()
 
     // new CopyWebpackPlugin([
     //   { from: 'src/server/amp/views', to: 'views/' }
@@ -129,5 +131,6 @@ module.exports = {
   node: {
     __dirname: false,
     __filename: false
-  }
+  },
+  stats: 'errors-only'
 }

@@ -6,6 +6,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const ProgressBarPlugin = require('progress-bar-webpack-plugin')
 const HappyPack = require('happypack');
 const os = require('os');
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
 
 const happyThreadPool = HappyPack.ThreadPool({
   size: os.cpus().length
@@ -209,8 +210,8 @@ module.exports = {
     new ProgressBarPlugin({
       format: '  build [:bar] ' + chalk.green.bold(':percent') + ' (:elapsed seconds)',
       clear: false
-    })
-
-
-  ]
+    }),
+    new FriendlyErrorsWebpackPlugin()
+  ],
+  stats: 'errors-only'
 }
