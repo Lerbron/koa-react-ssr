@@ -44,3 +44,4 @@ dist
 .idea/**/uiDesigner.xml
 .idea/**/gradle.xml
 .idea/**/libraries
+.vscode/
