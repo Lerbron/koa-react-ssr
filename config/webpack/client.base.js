@@ -42,7 +42,7 @@ module.exports = {
 
   output: {
     path: path.resolve(__dirname, '../../dist/client'),
-    filename: devMode ? '[name].bundle.js' : '[name].[hash].js',
+    filename: devMode ? '[name].bundle.js' : '[name].[hash:8].js',
     publicPath: config.public_path + '/'
   },
 
@@ -185,7 +185,7 @@ module.exports = {
 
     // 提取css插件
     new MiniCssExtractPlugin({
-      filename: devMode ? '[name].css' : '[name].[hash].css'
+      filename: devMode ? '[name].css' : '[name].[hash:8].css'
     }),
 
     // new OfflinePlugin({

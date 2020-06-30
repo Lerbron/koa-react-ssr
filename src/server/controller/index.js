@@ -15,6 +15,7 @@ import AppRouter, { routes } from "@/router";
 // 路由初始化的redux内容
 import { initialStateJSON } from "@/store/reducers";
 
+let tml= fs.readFileSync(path.join(__dirname, './../../dist/server/index.html'), 'utf-8')
 
 const router= new Router()
 router.get("/", async (ctx, next) => {
@@ -65,16 +66,11 @@ router.get("/", async (ctx, next) => {
 
   // 获取页面的meta，嵌套到模版中
   let meta = metaTagsInstance.renderToString();
-
   let reduxState = JSON.stringify(store.getState()).replace(/</g, "\\x3c");
-
-  let tml= fs.readFileSync(path.join(__dirname, './../../dist/server/index.html'), 'utf-8')
 
   let html= tml.replace('<%- html %>', _html)
   html= html.replace('<%- reduxState %>', reduxState)
   html= html.replace('<%- meta %>', meta)
-
-
 
   if (context.code == 302) {
     ctx.status= 302;
@@ -84,7 +80,6 @@ router.get("/", async (ctx, next) => {
     ctx.type= 'text/html';
     ctx.body= html;
   }
-
 
   // 释放store内存
   store = null;

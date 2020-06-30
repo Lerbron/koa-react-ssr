@@ -37,5 +37,6 @@ app.use(IndexRouter)
 app.use(router.routes())
   .use(router.allowedMethods())
 
-app.listen(port);
-console.log("server started on port " + port);
+app.listen(port, () => {
+  console.log("server started on port " + port);
+});
