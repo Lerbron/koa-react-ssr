@@ -1,11 +1,9 @@
 const webpack = require('webpack')
-// const HtmlwebpackPlugin = require('html-webpack-plugin');
 const path = require('path')
 const os = require('os');
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
 
 const nodeExternals = require('webpack-node-externals')
-// const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HappyPack = require('happypack');
 const happyThreadPool = HappyPack.ThreadPool({
   size: os.cpus().length
@@ -54,7 +52,6 @@ module.exports = {
       {
         test: /\.js$/i,
         exclude: /node_modules/,
-        // loader: 'babel',
         loader: 'happypack/loader?id=happybabel',
 
       },
@@ -63,18 +60,7 @@ module.exports = {
       {
         test: /\.scss$/,
         use: [{
-            loader: `css/locals`,
-            options: {
-              // modules: true,
-              // localIdentName: config.class_scoped_name
-              // minimize: true,
-              // sourceMap: true
-
-              // camelCase: true,
-              // importLoaders: 1,
-              // modules: true,
-              // localIdentName: config.class_scoped_name
-            }
+            loader: `css/locals`
           },
           {
             loader: `sass`
@@ -123,10 +109,6 @@ module.exports = {
       verbose: true
     }),
     new FriendlyErrorsWebpackPlugin()
-
-    // new CopyWebpackPlugin([
-    //   { from: 'src/server/amp/views', to: 'views/' }
-    // ])
   ],
   node: {
     __dirname: false,

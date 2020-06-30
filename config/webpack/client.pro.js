@@ -1,7 +1,6 @@
 const baseConfig = require('./client.base')
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-// const WebpackParallelUglifyPlugin = require('webpack-parallel-uglify-plugin')
-const analyzerPort = require('../index').analyzerPort
 
 const config = {
   ...baseConfig,
@@ -24,6 +23,21 @@ const config = {
         },
         sourceMap: false
       }),
+      // 压缩css
+			new OptimizeCSSAssetsPlugin({
+				// 默认是全部的CSS都压缩，该字段可以指定某些要处理的文件
+        assetNameRegExp: /\.(sa|sc|c)ss$/g, 
+				cssProcessor: require('cssnano'),
+				cssProcessorPluginOptions: {
+					preset: ['default', {
+						discardComments: {
+							removeAll: true,
+						},
+						normalizeUnicode: false
+					}]
+				},
+				canPrint: true
+			})
     ]
   },
   plugins: [

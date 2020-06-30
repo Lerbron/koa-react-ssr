@@ -109,7 +109,8 @@ module.exports = {
           {
             ...postcssConfig
           }
-        ]
+        ],
+        exclude: /node_modules/
       },
 
       // css 解析
