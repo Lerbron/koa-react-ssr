@@ -18,7 +18,7 @@ import { initialStateJSON } from "@/store/reducers";
 let tml= fs.readFileSync(path.join(__dirname, './../../dist/server/index.html'), 'utf-8')
 
 const router= new Router()
-router.get("/", async (ctx, next) => {
+router.get(/(.*)/, async (ctx, next) => {
   let store = configureStore(JSON.parse(initialStateJSON));
   let _route = null,
     _match = null;
