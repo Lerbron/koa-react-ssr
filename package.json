@@ -30,7 +30,7 @@
     "koa-proxy": "^1.0.0-alpha.3",
     "koa-static": "^5.0.0",
     "koa2-cors": "^2.0.6",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "memory-fs": "^0.5.0",
     "node-sass": "^4.9.3",
     "pm2": "^4.3.0",
